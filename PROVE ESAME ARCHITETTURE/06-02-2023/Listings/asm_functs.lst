@@ -1,0 +1,381 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 AREA             |.text|, CODE, READONLY
+    2 00000000                 EXPORT           calcola_somma_prodotto
+    3 00000000         
+    4 00000000         calcola_somma_prodotto
+                               PROC
+    5 00000000         
+    6 00000000 E92D 4DF0       PUSH             {r4-r8,r10-r11,lr}
+    7 00000004 F04F 0300       mov              r3, #0      ;somma
+    8 00000008 F04F 37FF       mov              r7, #-1
+    9 0000000C F04F 0801       mov              r8, #1
+   10 00000010         
+   11 00000010 6804    loop    ldr              r4, [r0]
+   12 00000012 6845            ldr              r5, [r0, #4]
+   13 00000014         
+   14 00000014 FB04 F605       mul              r6, r4, r5
+   15 00000018 4433            add              r3, r3, r6
+   16 0000001A         
+   17 0000001A F100 0008       add              r0, r0, #8
+   18 0000001E 1E89            subs             r1, r1, #2
+   19 00000020 D1F6            bne              loop
+   20 00000022         
+   21 00000022 2BFF            cmp              r3, #255
+   22 00000024 BFB8 6017       strlt            r7, [r2]
+   23 00000028 BFC8 F8C2 
+              8000             strgt            r8, [r2]
+   24 0000002E         
+   25 0000002E         
+   26 0000002E 4618            mov              r0, r3
+   27 00000030         
+   28 00000030 E8BD 8DF0       POP              {r4-r8,r10-r11,pc}
+   29 00000034         
+   30 00000034                 ENDP
+   31 00000034         
+   32 00000034         
+   33 00000034         
+   34 00000034         
+   35 00000034         ;ALGORITMO SORTING DECRESCENTE
+   36 00000034         ;get_and_sort PROC
+   37 00000034         ;     
+   38 00000034         ;    PUSH {r4-r8,r10-r11,lr} 
+   39 00000034         ;    
+   40 00000034         ;    MOV R7, #0 ;offset per primo elemento
+   41 00000034         ;    MOV R3, #0;offset corrente
+   42 00000034         ;    MOV R6, #0 ;massimo (mettere NUMERO GRANDE per il m
+                       inimo in caso di SORTING CRESCENTE)
+   43 00000034         ;    MOV R11, R2
+   44 00000034         ;      
+   45 00000034         ;loopext  SUB R4, R11, R7 ;lunghezza vettore interno
+   46 00000034         ;    ADD R8, R0, R7 ;indirizzo vettore interno
+   47 00000034         ;
+   48 00000034         ;loopint
+   49 00000034         ;    LDRB R5, [R8, R3] ;prendo elemento vettore interno
+   50 00000034         ;    
+   51 00000034         ;    CMP R5, R6 ;confronto con il massimo (minimo)
+   52 00000034         ;    MOVGT R6, R5 ;se è più grande (piccolo --> MOVLT)
+                        aggiorno il massimo (minimo)
+   53 00000034         ;    MOVGT R9, R3 ;prendo indice del massimo (minimo)
+   54 00000034         
+   55 00000034         
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   56 00000034         ;    ADD R3, R3, #1 ;vado a prossimo elemento
+   57 00000034         
+   58 00000034         ;    SUBS R4, R4, #1
+   59 00000034         ;    BNE loopint
+   60 00000034         
+   61 00000034         ;    LDRB R10, [R8] ;prendo elemento in prima posizione 
+                       vettore interno
+   62 00000034         
+   63 00000034         ;    STRB R6, [R8] ;stampo massimo nella prima posizione
+                        del vettore interno
+   64 00000034         ;    MOV R6, #0 ;metto massimo a 0
+   65 00000034         
+   66 00000034         ;    STRB R10, [R8, R9] ;stampo elemento in prima posizi
+                       one al posto del posto precedente del massimo
+   67 00000034         
+   68 00000034         
+   69 00000034         ;    ADD R7, R7, #1 ;accorcio vettore interno
+   70 00000034         ;    MOV R3, #0 ;azzero offset
+   71 00000034         ;    
+   72 00000034         ;    SUBS R2, R2, #1
+   73 00000034         ;    BNE loopext
+   74 00000034         
+   75 00000034         
+   76 00000034         ;    POP {r4-r8,r10-r11,pc}
+   77 00000034         
+   78 00000034         ;               ENDP
+   79 00000034         
+   80 00000034         ;    AREA |.text|, CODE, READONLY
+   81 00000034         ;    EXPORT ExtractVal
+   82 00000034         ;  
+   83 00000034         ;ExtractVal   PROC
+   84 00000034         ;     
+   85 00000034         ;    PUSH {r4-r8,r10-r11,lr}  
+   86 00000034         ;      
+   87 00000034         ;    LSR R0, R0, #3 ;prendo bit 3
+   88 00000034         ;    
+   89 00000034         ;    AND R0, R0, #255 ;prendo primi 8 bit    
+   90 00000034         ;    
+   91 00000034         
+   92 00000034         ;    POP {r4-r8,r10-r11,pc}
+   93 00000034         ;    
+   94 00000034         ;                ENDP
+   95 00000034         ;     
+   96 00000034         ;    EXPORT fill_fibonacci
+   97 00000034         
+   98 00000034         ;fill_fibonacci PROC
+   99 00000034         ; 
+  100 00000034         ;    PUSH {r4-r8,r10-r11,lr} 
+  101 00000034         ;    
+  102 00000034         ;    LDR R5, =fib ;ottengo indirizzo vettore
+  103 00000034         ;    MOV R12, #12 ;loop 12 volte
+  104 00000034         
+  105 00000034         
+  106 00000034         ;loop   
+  107 00000034         ;    LDR R7, [R5]
+  108 00000034         ;    LDR R8, [R5, #4]
+  109 00000034         ;    ADD R9, R7, R8
+  110 00000034         ;    
+  111 00000034         ;    STR R9, [R5, #8]
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+  112 00000034         ;    
+  113 00000034         ;    ADD R5, R5, #4
+  114 00000034         
+  115 00000034         
+  116 00000034         ;    SUBS R12, R12, #1
+  117 00000034         ;    BNE loop
+  118 00000034         
+  119 00000034         ;    POP {r4-r8,r10-r11,pc}
+  120 00000034         ;    
+  121 00000034         ;    ENDP
+  122 00000034         ;     
+  123 00000034         ;     
+  124 00000034         ;    EXPORT check_fibonacci
+  125 00000034         ;  
+  126 00000034         ;  
+  127 00000034         ;check_fibonacci PROC
+  128 00000034         ;     
+  129 00000034         ;    MOV R12, sp 
+  130 00000034         ;     
+  131 00000034         ;    PUSH {r4-r8,r10-r11,lr} 
+  132 00000034         ;    
+  133 00000034         ;    LDR R4, [R12] ;prendo boundary
+  134 00000034         ;    
+  135 00000034         ;    LDR R6, =fib     
+  136 00000034         ;    
+  137 00000034         
+  138 00000034         ;    
+  139 00000034         ;    
+  140 00000034         ;    MOV R12, #14
+  141 00000034         ;    MOV R8, #2
+  142 00000034         ;    
+  143 00000034         ;    
+  144 00000034         ;loop1   LDR R5, [R6]
+  145 00000034         ;    SUBS R5, R3, R5
+  146 00000034         ;    MULLT R7, R5, R8
+  147 00000034         ;    ADDLT R5, R5, R7
+  148 00000034         ;    
+  149 00000034         ;    CMP R5, R4
+  150 00000034         ;    BLE fail
+  151 00000034         ;    
+  152 00000034         ;    ADD R6, R6, #4            
+  153 00000034         ;    
+  154 00000034         ;    SUBS R12, R12, #1
+  155 00000034         ;    BNE loop1
+  156 00000034         ;      
+  157 00000034         ;    STR R3, [R0]
+  158 00000034         ;    MOV R0, #1
+  159 00000034         ;    B fine
+  160 00000034         
+  161 00000034         ;   
+  162 00000034         ;   
+  163 00000034         ;fail   MOV R0, #0
+  164 00000034         
+  165 00000034         ;    
+  166 00000034         
+  167 00000034         ;fine   POP {r4-r8,r10-r11,pc}
+  168 00000034         ;    
+  169 00000034         ;                ENDP
+  170 00000034         ;     
+
+
+
+ARM Macro Assembler    Page 4 
+
+
+  171 00000034         
+  172 00000034         
+  173 00000034         
+  174 00000034         
+  175 00000034         
+  176 00000034         
+  177 00000034         ;    EXPORT call_svc ;uso EXPORT perch� voglio usare l
+                       a variabile in un file esterno .C
+  178 00000034         ;    
+  179 00000034         ;    ;chiamo SVC function
+  180 00000034         ;call_svc  PROC
+  181 00000034         ;     
+  182 00000034         ;    SVC #0x15 ;chiamo SVC con numero arbitrario in base
+                        alle esigenze 
+  183 00000034         ;    BX lr
+  184 00000034         ;    
+  185 00000034         ;    ENDP ;fine singola procedura
+  186 00000034         ;     
+  187 00000034         ;    EXPORT  check_square
+  188 00000034         ;     
+  189 00000034         ;check_square
+  190 00000034         ;    PUSH {r4-r8,r10-r11,lr}    
+  191 00000034         ;    
+  192 00000034         ;    MUL R4, R0, R0  ;R4=x^2
+  193 00000034         ;    MUL R5, R1, R1 ;R5=y^2
+  194 00000034         ;    MUL R6, R2, R2 ;R6=r^2
+  195 00000034         ;    
+  196 00000034         ;    ADD R7, R4, R5 ;R7=x^2+y^2
+  197 00000034         ;    
+  198 00000034         ;    CMP R7, R6  ;confronto
+  199 00000034         ;    MOVLE R0, #1 ;se x^2+y^2 <= r^2 torna 1
+  200 00000034         ;    MOVGT R0, #0 ;altrimenti 0
+  201 00000034         ;    
+  202 00000034         ;    
+  203 00000034         
+  204 00000034         ;    POP {r4-r8,r10-r11,pc}
+  205 00000034         ;    
+  206 00000034         ;                ENDP
+  207 00000034         ;     
+  208 00000034         ;    
+  209 00000034         ;    EXPORT  my_division
+  210 00000034         
+  211 00000034         ;     
+  212 00000034         ;my_division
+  213 00000034         
+  214 00000034         ;    
+  215 00000034         ;    ; save current SP for a faster access 
+  216 00000034         ;    ; to parameters in the stack
+  217 00000034         ;    MOV   r12, sp
+  218 00000034         ;    ; save volatile registers
+  219 00000034         ;    PUSH {r4-r8,r10-r11,lr}
+  220 00000034         ;        
+  221 00000034         ;    
+  222 00000034         ;    LDR R0, [R0] ;R0=*(&area_f)
+  223 00000034         ;    LDR R1, [R1]  ;R1=*(&r_quadrato)
+  224 00000034         ;    IMPORT __aeabi_fdiv ;ci vuole IMPORT per usarla
+  225 00000034         ;    BL __aeabi_fdiv
+  226 00000034         ;    
+  227 00000034         ;    
+
+
+
+ARM Macro Assembler    Page 5 
+
+
+  228 00000034         ;    
+  229 00000034         ;   
+  230 00000034         ;    POP {r4-r8,r10-r11,pc}
+  231 00000034         ;    
+  232 00000034         ;    ENDP
+  233 00000034         
+  234 00000034         ;    EXPORT  next_state
+  235 00000034         ;     
+  236 00000034         ;     
+  237 00000034         ;next_state  PUSH {r4-r8,r10-r11,lr}
+  238 00000034         ;    
+  239 00000034         ;    AND R4, R0, #1 ;current state AND 1
+  240 00000034         ;    STR R4, [R2]
+  241 00000034         ;    
+  242 00000034         ;    MOV R5, #8 ;indice loop
+  243 00000034         ;    MOV R8, #8 ;8 fisso
+  244 00000034         ;    MOV R3, #1 ;flag prima iterazione
+  245 00000034         ;    
+  246 00000034         ;    ;R8-R5 � il numero di shift
+  247 00000034         
+  248 00000034         ;loop   TST R1, #1
+  249 00000034         ;    
+  250 00000034         ;    
+  251 00000034         ;    
+  252 00000034         ;    BEQ skip
+  253 00000034         ;    
+  254 00000034         
+  255 00000034         ;tap    SUB R6, R8, R5 ;calcolo numero di shift
+  256 00000034         ;    SUBS R3, R3, #1
+  257 00000034         ;    
+  258 00000034         ;    BEQ first ; prima iterazione
+  259 00000034         ;    
+  260 00000034         ;    LSR R9, R0, R6
+  261 00000034         ;    
+  262 00000034         ;    
+  263 00000034         ;    
+  264 00000034         ;    EOR R4, R4, R9
+  265 00000034         ;    
+  266 00000034         ;    
+  267 00000034         ;    
+  268 00000034         
+  269 00000034         ;    B skip
+  270 00000034         ;    
+  271 00000034         ;first   LSR R4, R0, R6
+  272 00000034         
+  273 00000034         ;    
+  274 00000034         ;skip   SUBS R5, R5, #1
+  275 00000034         ;    LSR R1, R1, #1
+  276 00000034         
+  277 00000034         ;    BNE loop
+  278 00000034         ;    
+  279 00000034         ;    AND R4, R4, #1
+  280 00000034         ;    LSL R4, R4, #7
+  281 00000034         ;    
+  282 00000034         ;    LSR R0, R0, #1
+  283 00000034         ;    
+  284 00000034         ;    ORR R0, R0, R4
+  285 00000034         
+  286 00000034         
+
+
+
+ARM Macro Assembler    Page 6 
+
+
+  287 00000034         
+  288 00000034         ;    LDMFD POP {r4-r8,r10-r11,pc}
+  289 00000034         ;    
+  290 00000034         ;    ENDP
+  291 00000034         
+  292 00000034         ;    AREA |.data|, DATA, READWRITE
+  293 00000034         ;  
+  294 00000034         ;fib    DCD 0,1,0,0,0,0,0,0,0,0,0,0,0,0
+  295 00000034         ;    
+  296 00000034                 END
+Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M3 --depe
+nd=.\objects\asm_functs.d -o.\objects\asm_functs.o -I.\Source\button_EXINT -I.\
+Source\CMSIS_core -I.\Source\joystick -I.\Source\led -I.\Source\RIT -I.\Source\
+timer -I.\Source -I.\RTE\_SW_Debug -IC:\Users\dorot\AppData\Local\Arm\Packs\ARM
+\CMSIS\6.1.0\CMSIS\Core\Include -IC:\Users\dorot\AppData\Local\Arm\Packs\Keil\L
+PC1700_DFP\2.7.2\Device\Include --predefine="__UVISION_VERSION SETA 541" --pred
+efine="LPC175x_6x SETA 1" --predefine="_RTE_ SETA 1" --list=.\listings\asm_func
+ts.lst ASM_functs.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+.text 00000000
+
+Symbol: .text
+   Definitions
+      At line 1 in file ASM_functs.s
+   Uses
+      None
+Comment: .text unused
+calcola_somma_prodotto 00000000
+
+Symbol: calcola_somma_prodotto
+   Definitions
+      At line 4 in file ASM_functs.s
+   Uses
+      At line 2 in file ASM_functs.s
+Comment: calcola_somma_prodotto used once
+loop 00000010
+
+Symbol: loop
+   Definitions
+      At line 11 in file ASM_functs.s
+   Uses
+      At line 19 in file ASM_functs.s
+Comment: loop used once
+3 symbols
+336 symbols in table

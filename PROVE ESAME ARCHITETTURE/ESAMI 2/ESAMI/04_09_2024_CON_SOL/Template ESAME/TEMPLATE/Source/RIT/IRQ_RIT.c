@@ -1,0 +1,145 @@
+/*********************************************************************************************************
+**--------------File Info---------------------------------------------------------------------------------
+** File name:           IRQ_RIT.c
+** Last modified Date:  2014-09-25
+** Last Version:        V1.00
+** Descriptions:        functions to manage T0 and T1 interrupts
+** Correlated files:    RIT.h
+**--------------------------------------------------------------------------------------------------------
+*********************************************************************************************************/
+#include "LPC17xx.h"
+#include "RIT.h"
+#include "timer/timer.h"
+#include "led/led.h"
+
+
+
+/******************************************************************************
+** Function name:		RIT_IRQHandler
+**
+** Descriptions:		REPETITIVE INTERRUPT TIMER handler
+**
+** parameters:			None
+** Returned value:		None
+**
+******************************************************************************/
+
+char flag;
+unsigned char LSB_negat;
+int c=0;
+
+void RIT_IRQHandler (void)
+{					
+	static int position=-1; //1->UP, 2->RIGHT, 3->LEFT, 4->DOWN	
+	static int debounce=0;	
+	static int i=0, avg;
+	
+	//GESTIONE DEBOUNCE BOTTONI
+	
+	debounce++;
+	
+	//INT0=10, KEY1==11, KEY2=12
+	//INT0=20, KEY1==22, KEY2=24
+	if((LPC_PINCON->PINSEL4 & (1 << 20)) == 0){ /*BOTTONE PREMUTO*/
+		if((LPC_GPIO2->FIOPIN & (1<<10)) == 0){ 	
+			reset_RIT();
+			switch(debounce){
+				case 1: /*dopo INTERVALLO RIT (es.50ms) faccio azione*/
+					//FAI AZIONE
+					if (var_prec!=var) {
+						c++;
+						var_prec=var;
+						vett[i]=var;
+						i++;
+						if(i==N) {
+							i=0;
+							clearvett();
+							LED_Out(0x0);
+							disable_timer(3);
+							reset_timer(3);
+							avg=avg_vett(vett,N,&flag);
+							if (flag==0) {
+								LSB_negat=extract_LSB(avg);
+								LED_Out(LSB_negat);
+							}
+							else {
+								enable_timer(3);
+							}
+								
+							
+							
+						}
+					}
+					break;
+				default: /*altrimenti il bottone è premuto per più tempo e non faccio nulla*/
+					break;
+			}
+		}
+		else {	/* button released */
+			debounce=0;			
+			disable_RIT();
+			reset_RIT();
+			//INT0=20 e EINT0_IRQn, KEY1==22 e EINT1_IRQn, KEY2=24 e EINT2_IRQn
+			
+			NVIC_EnableIRQ(EINT0_IRQn);							 /* RIATTIVO interruzione*/
+			
+			LPC_PINCON->PINSEL4    |= (1 << 20);     /* esco da modalita' GPIO*/
+		}
+		
+	}  	
+
+	
+	
+	
+	//GESTIONE JOYSTICK 
+	
+	//UP=29, RIGHT=28, LEFT=27, DOWN=26
+	if((LPC_GPIO1->FIOPIN & (1<<29)) == 0){	// UP PREMUTO
+		position=1;
+		//GESTIONE BOTTONE PREMUTO
+		
+		
+		
+	}
+	else if((LPC_GPIO1->FIOPIN & (1<<28)) == 0){ // RIGHT PREMUTO
+		position=2;
+
+	}
+	else if((LPC_GPIO1->FIOPIN & (1<<27)) == 0) { // LEFT PREMUTO
+		position=3;
+		
+	}
+	
+	else if((LPC_GPIO1->FIOPIN & (1<<26)) == 0) { // DOWN PREMUTO
+		position=4;
+		
+	}
+	else if ((LPC_GPIO1->FIOPIN & (1<<25)) == 0) { // SELECT PREMUTO
+		position=4;
+		
+	}
+	
+	switch(position) {
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		default:
+			break;
+	}
+		
+	
+	
+
+	LPC_RIT->RICTRL |= 0x1;	/* clear interrupt flag */
+	return;
+}
+
+/******************************************************************************
+**                            End Of File
+
+******************************************************************************/

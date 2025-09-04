@@ -1,0 +1,1 @@
+.\sortfunction.o: sortFunction.s
